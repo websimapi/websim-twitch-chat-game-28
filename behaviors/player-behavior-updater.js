@@ -1,13 +1,13 @@
 import { PLAYER_STATE } from '../player-state.js';
 import { AudioManager } from '../audio-manager.js';
 import { updateWander, updateMoveToTarget, updateFollowPath } from '../player-movement.js';
-import { beginChopping, finishChopping, startChoppingCycle } from './chopping.js';
+import { beginChopping, finishChopping, startChoppingCycle, findAndMoveToTree } from './chopping.js';
 import { beginHarvestingBushes, beginHarvestingLogs, finishHarvestingBushes, finishHarvestingLogs, harvestNextBush, startGatheringCycle } from './gathering.js';
 import { updateFollow } from './following.js';
 import { TILE_TYPE } from '../map-tile-types.js';
 import { findPath } from '../pathfinding.js';
 
-function treeHasBeenChopped(player, gameMap, allPlayers) {
+function treeHasBeenChopped(player, gameMap, allPlayers, game) {
     console.log(`[${player.username}] Joined in chopping a tree that was just cut. Proceeding to gather.`);
     
     // The player who finished the chop is responsible for spawning resources.
@@ -146,7 +146,7 @@ export function updateAction(player, deltaTime, gameMap, allPlayers, game) {
         case PLAYER_STATE.CHOPPING:
             if (!player.actionTarget || gameMap.grid[player.actionTarget.y][player.actionTarget.x] !== TILE_TYPE.TREE) {
                 // The tree is gone! Someone else must have finished it.
-                treeHasBeenChopped(player, gameMap, allPlayers);
+                treeHasBeenChopped(player, gameMap, allPlayers, game);
                 return; // Stop further processing for this frame
             }
             // The main logic for timer countdown is now handled centrally in game.js
